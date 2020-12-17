@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	id="WebApp_ID" version="3.0">
+	<display-name>Archetype Created Web Application</display-name>
+
+	<!-- log4j2-begin -->
+	<context-param>
+		<param-name>log4jConfiguration</param-name>
+		<param-value>classpath:log4j2.xml</param-value>
+	</context-param>
+	<!-- log4j2-begin 这部分在servlet 2.5之前需要配置，servlet2.5之后就不需要配置了 <listener> <listener-class>org.apache.logging.log4j.web.Log4jServletContextListener</listener-class> 
+		</listener> <filter> <filter-name>log4jServletFilter</filter-name> <filter-class>org.apache.logging.log4j.web.Log4jServletFilter</filter-class> 
+		</filter> <filter-mapping> <filter-name>log4jServletFilter</filter-name> 
+		<url-pattern>/*</url-pattern> <dispatcher>REQUEST</dispatcher> <dispatcher>FORWARD</dispatcher> 
+		<dispatcher>INCLUDE</dispatcher> <dispatcher>ERROR</dispatcher> </filter-mapping> 
+		log4j2-end -->
+	<context-param>
+		<param-name>myParamName</param-name>
+		<param-value>myParamValue</param-value>
+	</context-param>
+	<context-param>
+		<param-name>contextClass</param-name>
+		<param-value>springmvcdemo.my.MyXmlWebApplicationContext</param-value>
+	</context-param>
+	<context-param>
+		<param-name>contextId</param-name>
+		<param-value>myContextId</param-value>
+	</context-param>
+	<context-param>
+		<param-name>globalInitializerClasses</param-name>
+		<param-value>springmvcdemo.my.MyGlobalInitializerClass1,springmvcdemo.my.MyGlobalInitializerClass</param-value>
+	</context-param>
+	<context-param>
+		<param-name>contextInitializerClasses</param-name>
+		<param-value>springmvcdemo.my.MyGlobalInitializerClass3,springmvcdemo.my.MyGlobalInitializerClass2,springmvcdemo.my.MyGlobalInitializerClass5</param-value>
+	</context-param>
+	<listener>
+		<listener-class>springmvcdemo.my.MyServletContextListener</listener-class>
+	</listener>
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+				classpath:applicationContext.xml
+				classpath:hibernate/datasource.xml
+				classpath:hibernate/authhibernate.xml
+				classpath:hibernate/bueinesshibernate.xml
+				classpath:swagger2/swagger2.xml
+				classpath:activiti/datasource.xml
+		</param-value>
+	</context-param>
+	<!-- 配置 listener加载spring配置文件，如果不配置，加载器会查找/WEB-INF/applicationContext.xml -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<servlet>
+		<servlet-name>springmvc</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<!-- 可以自定义servlet.xml配置文件的位置和名称，默认为WEB-INF目录下，名称为[<servlet-name>]-servlet.xml，如spring-servlet.xml -->
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>
+				classpath:springmvc-servlet.xml
+			</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>springmvc</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+	<!-- <servlet>
+		<servlet-name>myservlet</servlet-name>
+		<servlet-class>org.springframework.context.support.ClassPathXmlApplicationContext</servlet-class>
+		可以自定义servlet.xml配置文件的位置和名称，默认为WEB-INF目录下，名称为[<servlet-name>]-servlet.xml，如spring-servlet.xml
+		<init-param>
+			<param-name>mykey</param-name>
+			<param-value>
+				myValue
+			</param-value>
+		</init-param>
+		<load-on-startup>2</load-on-startup>
+	</servlet> 
+	<servlet-mapping>
+		<servlet-name>myservlet</servlet-name>
+		<url-pattern>/hello</url-pattern>
+	</servlet-mapping>-->
+</web-app>

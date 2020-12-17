@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+        http://www.springframework.org/schema/data/jpa
+        http://www.springframework.org/schema/data/jpa/spring-jpa-1.8.xsd">
+
+	<bean id="authEntityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="authDataSource" />
+		<!-- 设定为自动扫描，spring新特性，有了packagesToScan，我们不再需要自己动手去实现实体类的扫描了 -->
+		<property name="packagesToScan" value="springmvcdemo.authentication" />
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="showSql" value="false" />
+				<!-- generateDdl= true表示自动生成DDL -->
+				<property name="generateDdl" value="true" />
+				<property name="databasePlatform" value="${business_config_dialect}" />
+			</bean>
+		</property>
+		<property name="jpaProperties">
+			<props>
+				<!-- 命名规则 My_NAME->MyName -->
+				<prop key="hibernate.ejb.naming_strategy">org.hibernate.cfg.DefaultNamingStrategy</prop>
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.format_sql">false</prop>
+				<!-- <prop key="hibernate.enable_lazy_load_no_trans">true</prop> -->
+				<!-- generateDdl= true表示自动生成DDL -->
+				<prop key="hibernate.generateDdl">true</prop>
+				<prop key="hibernate.databasePlatform" >${auth_config_dialect}</prop>
+				<!--hibernate二级缓存 ，独立于spring，使用javax.persistence.Cacheable-->
+				<prop key="hibernate.cache.use_query_cache">false</prop>
+				<prop key="hibernate.cache.use_second_level_cache">false</prop>
+				<!-- ENABLE_SELECTIVE，默认值，除非被@Cacheable显式声明要缓存，否则默认不缓存 DISABLE_SELECTIVE，除非被@Cacheable显式声明不缓存，否则默认缓存 
+					ALL，总是被缓存 NONE，总是不缓存 -->
+				<prop key="javax.persistence.sharedCache.mode">ENABLE_SELECTIVE</prop>
+				<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory
+				</prop>
+				<!-- ehcache.xml路径 -->
+				<prop key="hibernate.cache.provider_configuration_file_resource_path">classpath:ehcache.xml</prop> 
+			</props>
+		</property>
+	</bean>
+
+	<!-- 定义事务管理器 -->
+   <bean id="authTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="authEntityManagerFactory" />
+	</bean>
+	
+	<jpa:repositories base-package="springmvcdemo.authentication.repository"
+		entity-manager-factory-ref="authEntityManagerFactory"
+		transaction-manager-ref="authTransactionManager"></jpa:repositories>
+
+	<!--对@Transactional这个注解进行的驱动，这是基于注解的方式使用事务配置声明，这样在具体应用中可以指定对哪些方法使用事务。 -->
+	<!-- <tx:annotation-driven transaction-manager="authTransactionManager" /> -->
+
+</beans>
